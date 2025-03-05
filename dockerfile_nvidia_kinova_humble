@@ -57,6 +57,18 @@ RUN apt-get update && apt-get install -y ros-humble-realtime-tools \
 
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
 
+RUN apt-get install -y gstreamer1.0-tools \
+                       gstreamer1.0-libav \
+                       libgstreamer1.0-dev \
+                       libgstreamer-plugins-base1.0-dev \
+                       libgstreamer-plugins-good1.0-dev \
+                       gstreamer1.0-plugins-good \
+                        gstreamer1.0-plugins-base
+
+RUN apt-get -y install ros-humble-camera-calibration-parsers && \
+    apt-get -y install ros-humble-camera-info-manager && \
+    apt-get -y install ros-humble-image-transport
+
 
 #FOR some reason I have to make these steps inside the container, otherwise the build fails
 
