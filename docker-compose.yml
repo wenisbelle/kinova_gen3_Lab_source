@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  kinova_humble:
+    image: nvidia_ros_humble_kinova_test:latest
+    container_name: nvidia_ros_humble_kinova_test_container
+    hostname: nvidia_ros_humble_kinova_test_container
+    runtime: nvidia
+    environment:
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+      - DISPLAY
+    devices:
+      - /dev/dri
+      - /dev/input/js0:/dev/input/js0 ## Add this line to pass through the joystick usign joy_linux package
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./:/Kinova_gen3/src:rw  # Mount the current directory as readable and writable
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    stdin_open: true
+    tty: true
+    restart: "no"
+    network_mode: "host"  # Add this line to use the host network
+    command: /bin/bash  # Add this line to start a bash shell

@@ -1,0 +1,78 @@
+FROM nvidia/cuda:12.4.0-base-ubuntu22.04
+
+# Minimal setup
+RUN apt-get update \
+ && apt-get install -y locales lsb-release
+ARG DEBIAN_FRONTEND=noninteractive
+RUN locale-gen en_US en_US.UTF-8 && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+SHELL [ "/bin/bash" , "-c" ]
+
+# Install ROS2 Humble
+RUN apt update \
+ && apt install -y --no-install-recommends curl \
+ && apt install -y --no-install-recommends gnupg2 \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y net-tools gedit
+ 
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+RUN apt update \
+ && apt install -y ros-humble-desktop \
+ && apt install -y ros-humble-ros-gz
+
+RUN apt-get update
+
+RUN apt-get update && apt-get install -y ros-humble-ros2-control \
+                        ros-humble-ign-ros2-control  \
+                        ros-humble-joint-state-broadcaster \
+                        ros-humble-joint-state-publisher \
+                        ros-humble-joint-trajectory-controller \
+                        ros-humble-velocity-controllers \
+                        ros-humble-rqt-robot-steering \
+                        ros-humble-ros-testing \
+                        ros-humble-joy-linux \
+                        ros-humble-moveit
+
+RUN apt-get install -y python3-rosdep \
+ && apt-get install -y python3-colcon-common-extensions \
+ && apt-get install -y python3-vcstool
+
+RUN apt-get install -y git
+
+RUN mkdir -p /Kinova_gen3/src
+COPY ./ /Kinova_gen3/src 
+WORKDIR /Kinova_gen3
+
+RUN apt-get update && apt-get install -y ros-humble-realtime-tools \
+                   && apt-get install -y ros-humble-control-toolbox \
+                   && apt-get install -y ros-humble-ackermann-msgs \
+                   && apt-get install -y ros-humble-kinematics-interface \
+                   && apt-get install -y ros-humble-kinematics-interface-kdl \
+                   && apt-get install -y ros-humble-gazebo-dev \
+                   && apt-get install -y ros-humble-gazebo-ros \
+                   && apt-get install -y ros-humble-action-msgs 
+
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
+
+
+#FOR some reason I have to make these steps inside the container, otherwise the build fails
+
+#RUN vcs import src --skip-existing --input src/ros2_kortex/ros2_kortex.humble.repos
+#RUN vcs import src --skip-existing --input src/ros2_kortex/ros2_kortex-not-released.humble.repos
+#RUN vcs import src --skip-existing --input src/ros2_kortex/simulation.humble.repos
+   
+# Initialize rosdep and install dependencies
+#RUN rosdep init && \
+#    rosdep update && \
+#    rosdep install --from-paths src --ignore-src -r -y
+
+#RUN colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --parallel-workers 1
+
+#RUN /bin/bash -c "source /opt/ros/humble/setup.bash && source install/setup.bash"
+ 
+#RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc && \
+#    echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
+#    echo "source /Kinova_gen3/install/setup.bash" >> ~/.bashrc
