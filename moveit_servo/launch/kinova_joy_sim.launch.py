@@ -37,7 +37,7 @@ def generate_launch_description():
 
 
     description_arguments = {
-        "robot_ip": "192.168.1.10",
+        "robot_ip": "xxx.yyy.zzz.www",
         "use_fake_hardware": "false",
         "gripper": "robotiq_2f_85",
         "dof": "7",
@@ -50,7 +50,7 @@ def generate_launch_description():
     )
 
     # Get parameters for the Servo node
-    servo_yaml = load_yaml("moveit_servo", "config/kinova_config.yaml")
+    servo_yaml = load_yaml("moveit_servo", "config/kinova_simulated_config.yaml")
     servo_params = {"moveit_servo": servo_yaml}
 
     # Launch as much as possible in components
