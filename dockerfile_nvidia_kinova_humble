@@ -53,7 +53,8 @@ RUN apt-get update && apt-get install -y ros-humble-realtime-tools \
                    && apt-get install -y ros-humble-kinematics-interface-kdl \
                    && apt-get install -y ros-humble-gazebo-dev \
                    && apt-get install -y ros-humble-gazebo-ros \
-                   && apt-get install -y ros-humble-action-msgs 
+                   && apt-get install -y ros-humble-action-msgs \
+                   && apt-get install ros-humble-rmw-cyclonedds-cpp
 
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
 
