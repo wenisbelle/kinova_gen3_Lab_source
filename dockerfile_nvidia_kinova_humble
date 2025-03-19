@@ -34,7 +34,8 @@ RUN apt-get update && apt-get install -y ros-humble-ros2-control \
                         ros-humble-rqt-robot-steering \
                         ros-humble-ros-testing \
                         ros-humble-joy-linux \
-                        ros-humble-moveit
+                        ros-humble-moveit \
+                        ros-humble-warehouse-ros-sqlite
 
 RUN apt-get install -y python3-rosdep \
  && apt-get install -y python3-colcon-common-extensions \
@@ -55,7 +56,8 @@ RUN apt-get update && apt-get install -y ros-humble-realtime-tools \
                    && apt-get install -y ros-humble-gazebo-ros \
                    && apt-get install -y ros-humble-action-msgs \
                    && apt-get install -y ros-humble-rmw-cyclonedds-cpp \
-                   && apt-get install -y ros-humble-test-msgs
+                   && apt-get install -y ros-humble-test-msgs \
+                   
 
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
 
@@ -69,7 +71,8 @@ RUN apt-get install -y gstreamer1.0-tools \
 
 RUN apt-get -y install ros-humble-camera-calibration-parsers && \
     apt-get -y install ros-humble-camera-info-manager && \
-    apt-get -y install ros-humble-image-transport
+    apt-get -y install ros-humble-image-transport && \
+    apt-get install ros-humble-depth-image-proc
 
 
 #FOR some reason I have to make these steps inside the container, otherwise the build fails

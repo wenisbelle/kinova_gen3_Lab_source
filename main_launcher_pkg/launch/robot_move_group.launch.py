@@ -61,8 +61,18 @@ def launch_setup(context, *args, **kwargs):
         .planning_pipelines(pipelines=["ompl", "pilz_industrial_motion_planner"])
         .to_moveit_configs()
     )
-
     moveit_config.moveit_cpp.update({"use_sim_time": use_sim_time.perform(context) == "true"})
+
+    warehouse_ros_config = {
+        # For warehouse_ros_sqlite
+        "warehouse_plugin": "warehouse_ros_sqlite::DatabaseConnection",
+        "warehouse_host": "/Kinova_gen3/src/main_launcher_pkg/sqlite_database/warehouse_db.sqlite",
+        # For warehouse_ros_mongodb use the following instead
+        # "warehouse_port": 33829,
+        # "warehouse_host": "localhost",
+        # "warehouse_plugin": "warehouse_ros_mongo::MongoDatabaseConnection",
+    }
+
 
     move_group_node = Node(
         package="moveit_ros_move_group",
@@ -70,6 +80,7 @@ def launch_setup(context, *args, **kwargs):
         output="screen",
         parameters=[
             moveit_config.to_dict(),
+            warehouse_ros_config,
         ],
     )
 
@@ -152,6 +163,7 @@ def launch_setup(context, *args, **kwargs):
             moveit_config.robot_description_kinematics,
             moveit_config.planning_pipelines,
             moveit_config.joint_limits,
+            warehouse_ros_config,
         ],
     )
 
