@@ -39,30 +39,7 @@ RUN apt-get update && apt-get install -y ros-humble-ros2-control \
 
 RUN apt-get install -y python3-rosdep \
  && apt-get install -y python3-colcon-common-extensions \
- && apt-get install -y python3-vcstool
-
-RUN apt-get install -y git
-
-RUN mkdir -p /Kinova_gen3/src
-COPY ./ /Kinova_gen3/src 
-WORKDIR /Kinova_gen3
-
-RUN apt-get update && apt-get install -y ros-humble-realtime-tools \
-                   && apt-get install -y ros-humble-control-toolbox \
-                   && apt-get install -y ros-humble-ackermann-msgs \
-                   && apt-get install -y ros-humble-kinematics-interface \
-                   && apt-get install -y ros-humble-kinematics-interface-kdl \
-                   && apt-get install -y ros-humble-gazebo-dev \
-                   && apt-get install -y ros-humble-gazebo-ros \
-                   && apt-get install -y ros-humble-action-msgs \
-                   && apt-get install -y ros-humble-rmw-cyclonedds-cpp \
-                   && apt-get install -y ros-humble-test-msgs \
-                   
-
-RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
-
-RUN apt-get install -y gstreamer1.0-tools \
-                       gstreamer1.0-libav \
+ && apt-apt-get install python3-pip     gstreamer1.0-libav \
                        libgstreamer1.0-dev \
                        libgstreamer-plugins-base1.0-dev \
                        libgstreamer-plugins-good1.0-dev \
@@ -92,4 +69,4 @@ RUN apt-get -y install ros-humble-camera-calibration-parsers && \
  
 #RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc && \
 #    echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
-#    echo "source /Kinova_gen3/install/setup.bash" >> ~/.bashrc
+#    echo "source /Kinova_gen3/install/setup.bash" >> ~/.bashrcament_lint_auto

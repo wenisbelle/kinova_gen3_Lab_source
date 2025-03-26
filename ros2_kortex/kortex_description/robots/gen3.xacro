@@ -5,7 +5,7 @@
     <!-- Arguments -->
     <xacro:arg name="arm" default="gen3" />
     <xacro:arg name="dof" default="7" />
-    <xacro:arg name="vision" default="false" />
+    <xacro:arg name="vision" default="true" />
     <xacro:arg name="robot_ip" default="192.168.11.11" />
     <xacro:arg name="username" default="admin" />
     <xacro:arg name="password" default="admin" />
@@ -32,29 +32,33 @@
     <!-- convert to property to use substitution in function -->
     <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
     <link name="world">
-      <!-- Inertial properties -->
+    </link>
+  
+    <link name="table">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0" />
-        <mass value="1.0" /> <!-- Adjust mass as needed -->
+        <mass value="1.0" />
         <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1" />
       </inertial>
-
-      <!-- Visual properties -->
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <box size="2 1 0.2" />
+          <box size="2 1 0.1" />
         </geometry>
       </visual>
-
-      <!-- Collision properties -->
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <box size="2 1 0.2" />
+          <box size="2 1 0.1" />
         </geometry>
       </collision>
     </link>
+  
+  <joint name="table_joint" type="fixed">
+    <origin xyz="0.95 0 -0.08" rpy="0.0 0.0 0.0" />
+      <parent link="world"/>
+      <child link="table" />
+  </joint>
 
     <xacro:load_robot
         parent="world"

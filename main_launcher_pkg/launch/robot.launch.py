@@ -25,7 +25,8 @@ def generate_launch_description():
             launch_arguments={
                 'gripper': 'robotiq_2f_85',
                 'robot_ip': '192.168.1.10',
-                'launch_rviz': 'false'
+                'launch_rviz': 'false',
+                'vision': 'true'
             }.items(),
         ),
         gripper_contact_point,
