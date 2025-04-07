@@ -6,6 +6,8 @@ services:
     container_name: nvidia_ros_humble_kinova_test_container
     hostname: nvidia_ros_humble_kinova_test_container
     runtime: nvidia
+    privileged: true
+
     environment:
       - QT_X11_NO_MITSHM=1
       - NVIDIA_DRIVER_CAPABILITIES=all
@@ -14,6 +16,7 @@ services:
     devices:
       - /dev/dri
       - /dev/input/js0:/dev/input/js0 ## Add this line to pass through the joystick usign joy_linux package
+      # - /dev/bus/usb/001/011:/dev/bus/usb/001/011
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./:/Kinova_gen3/src:rw  # Mount the current directory as readable and writable

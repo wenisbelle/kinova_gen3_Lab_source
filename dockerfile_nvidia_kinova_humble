@@ -51,6 +51,10 @@ RUN apt-get -y install ros-humble-camera-calibration-parsers && \
     apt-get -y install ros-humble-image-transport && \
     apt-get install ros-humble-depth-image-proc
 
+# For the intel real sense
+RUN apt-get -y install ros-humble-librealsense2* \
+                        ros-humble-realsense2-*
+    
 
 #FOR some reason I have to make these steps inside the container, otherwise the build fails
 
