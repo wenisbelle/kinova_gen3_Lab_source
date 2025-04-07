@@ -176,7 +176,10 @@ This is also very experimental, for now It only gets the image and draw a boundi
 ## To do
 
 [ ] Implement the move servo with mediapipe 
+
 [ ] Implement the move servo with the imu sensor 
+
 [ ] Creating our own classification dataset of mortar ammunitions and train in yolo
+
 [ ] Implementing the automatic detection with the visual system 
 
