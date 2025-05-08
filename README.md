@@ -9,7 +9,7 @@ The system runs inside a docker container, so be sure you have the docker engine
 
     docker build -f dockerfile_nvidia_kinova_humble -t nvidia_ros_humble_kinova_test .
 
-Get rest, because it will take a while to complete. In my computer it crashed the system when I tried just to build the system with colcon build, even decreasing the number of parall workers, so my solution was building one package at time with the following conditions
+Get rest, because it will take a while to complete. In my computer it crashed the system when I tried just to build the system with colcon build, even decreasing the number of parallel workers, so my solution was building one package at time with the following conditions
 
     export MAKEFLAGS="-j 1"
     colcon build --executor sequential

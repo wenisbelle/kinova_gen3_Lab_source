@@ -9,7 +9,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     moveit_servo = os.path.join(
-        get_package_share_directory('moveit_servo'), 'launch', 'kinova_joy.launch.py')
+        get_package_share_directory('moveit_servo'), 'launch', 'kinova_joy_sim.launch.py')
     
     joy_node = Node(
         package="joy_linux",

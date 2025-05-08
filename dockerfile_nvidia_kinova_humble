@@ -67,10 +67,11 @@ RUN apt-get -y install ros-humble-librealsense2* \
 #    rosdep update && \
 #    rosdep install --from-paths src --ignore-src -r -y
 
-#RUN colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --parallel-workers 1
+RUN export MAKEFLAGS="-j 1"
+RUN colcon build --executor sequential
 
-#RUN /bin/bash -c "source /opt/ros/humble/setup.bash && source install/setup.bash"
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && source install/setup.bash"
  
-#RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc && \
-#    echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
-#    echo "source /Kinova_gen3/install/setup.bash" >> ~/.bashrcament_lint_auto
+RUN echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc && \
+    echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
+    echo "source /Kinova_gen3/install/setup.bash" >> ~/.bashrcament_lint_auto
