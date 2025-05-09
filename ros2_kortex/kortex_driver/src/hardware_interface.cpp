@@ -928,7 +928,7 @@ void KortexMultiInterfaceHardware::prepareCommands()
 
     base_command_.mutable_actuators(static_cast<int>(i))->set_position(cmd_degrees_tmp_);
     // Velocity command interface not implemented properly in the kortex api
-    // base_command_.mutable_actuators(i)->set_velocity(cmd_vel_tmp_);
+    //base_command_.mutable_actuators(i)->set_velocity(cmd_vel_tmp_);
     base_command_.mutable_actuators(static_cast<int>(i))->set_command_id(base_command_.frame_id());
   }
 }
