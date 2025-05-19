@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
   kinova_humble:
-    image: nvidia_ros_humble_kinova_test:latest
-    container_name: nvidia_ros_humble_kinova_test_container
-    hostname: nvidia_ros_humble_kinova_test_container
+    image: nvidia_ros_humble_kinova_source:latest
+    container_name: nvidia_ros_humble_kinova_container
+    hostname: nvidia_ros_humble_kinova_container
     runtime: nvidia
     privileged: true
 
