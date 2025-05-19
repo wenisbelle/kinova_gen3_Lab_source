@@ -67,21 +67,12 @@ WORKDIR /Kinova_gen3
 
 COPY ./ /Kinova_gen3/src
 
-RUN pip3 install vcstool
-
-RUN vcs import src --skip-existing --input src/ros2_kortex/ros2_kortex.humble.reposros-humble-warehouse-*humble.repos
-RUN vcs import src --skip-existing --input src/ros2_kortex/simulation.humble.repos
-   
-# Initialize rosdep and install dependencies
-RUN rosdep init && \
-    rosdep update && \
-    rosdep install --from-paths src --ignore-src -r -y
-
+  
 RUN apt-get install -y \
     ros-humble-action-msgs
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
-#RUN export MAKEFLAGS="-j 1"
-#RUN colcon build --executor sequential
+RUN export MAKEFLAGS="-j 1"
+RUN colcon build --executor sequential
 
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
  
