@@ -69,10 +69,11 @@ COPY ./ /Kinova_gen3/src
 
   
 RUN apt-get install -y \
-    ros-humble-action-msgs
-RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
-RUN export MAKEFLAGS="-j 1"
-RUN colcon build --executor sequential
+    ros-humble-action-msgs 
+
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
+    export MAKEFLAGS='-j 1' && \
+    colcon build --executor sequential"
 
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
  
