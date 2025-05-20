@@ -5,5 +5,7 @@
         "vector": "cpp",
         "functional": "cpp",
         "future": "cpp"
-    }
+    },
+    "ros.distro": "humble",
+    "cmake.sourceDirectory": "/home/wenis/Portifolio/ROS/kinova_source/kinova_gen3_Lab_source/yolov8_msgs"
 }

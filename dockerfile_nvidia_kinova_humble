@@ -73,7 +73,11 @@ RUN rosdep init && \
     rosdep install --from-paths src --ignore-src -r -y
 
 RUN apt-get install -y \
-    ros-humble-action-msgs
+    ros-humble-action-msgs \
+    ros-humble-test-msgs \
+    ros-humble-kinematics-interface \
+    ros-humble-kinematics-interface-kdl \
+    ros-humble-ackermann-msgs
 
 RUN /bin/bash -c '\
     source /opt/ros/humble/setup.bash && \
