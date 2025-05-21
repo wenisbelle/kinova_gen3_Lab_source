@@ -187,14 +187,15 @@ def launch_setup(context, *args, **kwargs):
     )
 
     nodes_to_start = [
-        ros2_control_node,
-        robot_state_publisher,
-        joint_state_broadcaster_spawner,
-        delay_rviz_after_joint_state_broadcaster_spawner,
-        robot_traj_controller_spawner,
-        robot_pos_controller_spawner,
-        robot_hand_controller_spawner,
-        fault_controller_spawner,
+        #ros2_control_node,
+        #robot_state_publisher,
+        #joint_state_broadcaster_spawner,
+        #delay_rviz_after_joint_state_broadcaster_spawner,
+        #robot_traj_controller_spawner,
+        #robot_pos_controller_spawner,
+        #robot_hand_controller_spawner,
+        #fault_controller_spawner,
+        rviz_node,
         move_group_node,
         static_tf,
     ]
