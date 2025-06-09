@@ -85,7 +85,7 @@ private:
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("pose_tracking_demo");
+  rclcpp::Node::SharedPtr node = rclcpp::Node::make_shared("pose_tracking");
 
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);

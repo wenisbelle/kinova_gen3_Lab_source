@@ -22,6 +22,7 @@ set(SERVO_CONTROLLER_INPUT servo_controller_input)
 # Executable Nodes ##############################################
 set(SERVO_NODE_MAIN_NAME servo_node_main)
 set(POSE_TRACKING_DEMO_NAME servo_pose_tracking_demo)
+set(POSE_TRACKING_DEMO_NAME_V2 servo_pose_tracking_demo_v2)
 set(FAKE_SERVO_CMDS_NAME fake_command_publisher)
 
 #################################################################
@@ -116,6 +117,11 @@ add_executable(${POSE_TRACKING_DEMO_NAME} src/cpp_interface_demo/pose_tracking_d
 target_link_libraries(${POSE_TRACKING_DEMO_NAME} ${POSE_TRACKING})
 ament_target_dependencies(${POSE_TRACKING_DEMO_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
+# Changging in pose tracking
+add_executable(${POSE_TRACKING_DEMO_NAME_V2} src/cpp_interface_demo/pose_tracking_demo_v2.cpp)
+target_link_libraries(${POSE_TRACKING_DEMO_NAME_V2} ${POSE_TRACKING})
+ament_target_dependencies(${POSE_TRACKING_DEMO_NAME_V2} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
 # Add executable to publish fake servo commands for testing/demo purposes
 add_executable(${FAKE_SERVO_CMDS_NAME} test/publish_fake_jog_commands.cpp)
 ament_target_dependencies(${FAKE_SERVO_CMDS_NAME}
@@ -149,6 +155,7 @@ install(
     ${SERVO_NODE_MAIN_NAME}
     ${CPP_DEMO_NAME}
     ${POSE_TRACKING_DEMO_NAME}
+    ${POSE_TRACKING_DEMO_NAME_V2}
     ${FAKE_SERVO_CMDS_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
