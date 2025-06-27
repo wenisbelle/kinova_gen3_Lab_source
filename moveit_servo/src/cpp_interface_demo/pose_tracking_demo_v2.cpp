@@ -38,7 +38,11 @@
 
  #include <std_msgs/msg/int8.hpp>
  #include <geometry_msgs/msg/transform_stamped.hpp>
- #include <geometry_msgs/msg/pose.hpp>  // Add for Pose message
+ #include <geometry_msgs/msg/pose.hpp>
+ #include <tf2/LinearMath/Quaternion.h>
+ #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+ #include <tf2/LinearMath/Vector3.h>
+ #include <tf2/LinearMath/Transform.h> 
  
  #include <moveit_servo/servo.h>
  #include <moveit_servo/pose_tracking.h>
@@ -48,6 +52,7 @@
  #include <moveit_servo/make_shared_from_pool.h>
  #include <thread>
  #include <mutex>  // For std::mutex
+ #include <Eigen/Geometry>
  
  static const rclcpp::Logger LOGGER = rclcpp::get_logger("moveit_servo.pose_tracking_demo");
  
@@ -79,6 +84,40 @@
    rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr sub_;
  };
  
+ // Function to use the camera orientation values
+ geometry_msgs::msg::Quaternion QuaternionRotation(const geometry_msgs::msg::Quaternion& q1,
+                                                  const geometry_msgs::msg::Quaternion& q2){
+  
+    tf2::Quaternion current_quat;
+    tf2::fromMsg(q1, current_quat);
+
+    tf2::Quaternion delta_quat;
+    tf2::fromMsg(q2, delta_quat);
+
+    auto new_quat = current_quat*delta_quat;
+    return tf2::toMsg(new_quat.normalize());
+ }
+
+ tf2::Vector3 TransformToGlobal(const geometry_msgs::msg::Pose& camera_delta, const geometry_msgs::msg::TransformStamped& current_ee_tf)
+ {
+    const tf2::Vector3 local_positions(
+        static_cast<tf2Scalar>(camera_delta.position.x),
+        static_cast<tf2Scalar>(-camera_delta.position.y),
+        static_cast<tf2Scalar>(camera_delta.position.z)
+    );
+
+    const tf2::Quaternion quat(
+        static_cast<tf2Scalar>(current_ee_tf.transform.rotation.x),
+        static_cast<tf2Scalar>(current_ee_tf.transform.rotation.y),
+        static_cast<tf2Scalar>(current_ee_tf.transform.rotation.z),
+        static_cast<tf2Scalar>(current_ee_tf.transform.rotation.w)
+    );
+
+    tf2::Vector3 world_postion = tf2::quatRotate(quat, local_positions);
+    return world_postion;
+ }
+
+
  /**
   * Instantiate the pose tracking interface.
   * Subscribe to camera_target_pose topic and use it to update the target pose
@@ -150,9 +189,6 @@
    target_pose.pose.position.z = current_ee_tf.transform.translation.z;
    target_pose.pose.orientation = current_ee_tf.transform.rotation;
  
-   // Modify it a little bit
-   target_pose.pose.position.x += 0.1;
- 
    // resetTargetPose() can be used to clear the target pose and wait for a new one, e.g. when moving between multiple
    // waypoints
    tracker.resetTargetPose();
@@ -165,25 +201,36 @@
    std::mutex target_pose_mutex;
    geometry_msgs::msg::PoseStamped latest_camera_target_pose = target_pose;  // Initialize with current target_pose
    bool new_camera_pose_received = false;
+
+   std::cout <<"First Target pose " << target_pose.pose.position.z << std::endl;
  
    // Subscribe to camera_target_pose
    auto camera_target_sub = node->create_subscription<geometry_msgs::msg::Pose>(
        "camera_target_pose", rclcpp::SystemDefaultsQoS(),
        [&](const geometry_msgs::msg::Pose::ConstSharedPtr msg) {
          std::lock_guard<std::mutex> lock(target_pose_mutex);
-         latest_camera_target_pose.pose.position.z = msg->position.y;
-         latest_camera_target_pose.header.frame_id = target_pose.header.frame_id;  // Use same frame as initial target
+         tracker.getCommandFrameTransform(current_ee_tf);
+         auto delta_position = TransformToGlobal(*msg, current_ee_tf);
+
          latest_camera_target_pose.header.stamp = node->now();
+         latest_camera_target_pose.pose.position.x = current_ee_tf.transform.translation.x + (delta_position.x())*(0.5);
+         latest_camera_target_pose.pose.position.y = current_ee_tf.transform.translation.y + (delta_position.y())*(0.5);
+         latest_camera_target_pose.pose.position.z = current_ee_tf.transform.translation.z + (delta_position.z())*(0.5);
+         latest_camera_target_pose.pose.orientation = QuaternionRotation(current_ee_tf.transform.rotation,msg->orientation);
+         //std::cout << "Positions: " << current_ee_tf.transform.translation.x << " " << current_ee_tf.transform.translation.y
+         //           << "  " << current_ee_tf.transform.translation.z << std::endl;
          new_camera_pose_received = true;
        });
  
    // Run the pose tracking in a new thread
    std::thread move_to_pose_thread([&tracker, &lin_tol, &rot_tol] {
-     moveit_servo::PoseTrackingStatusCode tracking_status =
-         tracker.moveToPose(lin_tol, rot_tol, 0.1 /* target pose timeout */);
-     RCLCPP_INFO_STREAM(LOGGER, "Pose tracker exited with status: "
-                                    << moveit_servo::POSE_TRACKING_STATUS_CODE_MAP.at(tracking_status));
-   });
+    while (rclcpp::ok()) {  
+      moveit_servo::PoseTrackingStatusCode tracking_status =
+          tracker.moveToPose(lin_tol, rot_tol, 0.1 /* target pose timeout */);
+      //RCLCPP_INFO_STREAM(LOGGER, "Pose tracker exited with status: "
+      //                               << moveit_servo::POSE_TRACKING_STATUS_CODE_MAP.at(tracking_status));
+    }
+    });
  
    rclcpp::WallRate loop_rate(50);
    while (rclcpp::ok() && new_camera_pose_received == false)
@@ -191,7 +238,7 @@
      loop_rate.sleep();  // Wait for first camera pose
    }
  
-   for (size_t i = 0; i < 500; ++i)
+   while(rclcpp::ok())
    {
      // Update target_pose from camera if new data is available
      {
@@ -202,7 +249,7 @@
          new_camera_pose_received = false;
        }
      }
- 
+     
      // Publish the updated target pose
      target_pose.header.stamp = node->now();
      target_pose_pub->publish(target_pose);
